@@ -1,0 +1,306 @@
+#! /bin/bash
+
+
+a="$1"
+#--------------------------------#
+#Author: muhammad
+#this is a search function#####
+
+
+
+function src() {
+
+	tbr=""
+	lst=()
+	a=$(cat $a | egrep -i "$1" | sort)
+	
+	for i in $a
+	do
+		lst+=($i)
+	done
+
+	select j in ${lst[@]}
+	do
+		if [[ $j ]]
+		then
+			tbr+=$(echo $j)
+		fi
+	echo $tbr
+	return
+	done
+}
+
+
+#Author: MUHAMMAD----------------------------#
+#----------------------------#
+#update amount#
+
+
+function updateAmount() {
+
+local name=$1
+local amount=$2
+if [[ $amount -ge 1 ]]
+then
+	output=$(src $name)
+	output2=$(echo $output | cut -d"," -f1)
+	sed -i "s/$output/$output2,$amount/g" $a
+	
+	echo "Amount has been updated"
+	return 0
+	log updateAmount Success
+	
+else
+	echo "amount cant be less than 1"
+	return 1
+	log updateAmount Fail
+fi
+}
+
+
+
+
+#-------------------------------------#
+#author: MUHAMMAD
+#UPDATE RECORD NAME FUNCTION!########
+
+
+function updateName() {
+
+local name=$1
+local new=$2
+        output=$(src $name)
+	output2=$(echo $output | cut -d"," -f2)
+        sed -i "s/$output/$newname,$output2/g" $a
+	if [[ $? == 0 ]]
+	then
+		echo "Name has been updated"
+		return 0
+		log updateName Success
+	else
+		echo "Name does not exist" 2> error.txt
+		return 1
+		log updateName Fail
+	fi
+
+}
+
+
+#-----------------------------#
+#Author: MUHAMMAD####
+###THIS FUNCTION SUMS THE AMOUNT OF RECORDS##
+
+
+
+function Sum_records(){
+
+	sum=0
+	lst=$(cat $a | egrep -o "[[:digit:]]")
+
+	for i in $lst
+	do
+
+	sum=$((sum+i))
+	done
+	if [[ $? -eq 0 ]]
+	then
+		log Sum_records Success
+	else
+		log Sum_records Fail
+	fi
+	echo ${sum[@]}
+
+}
+
+#----------------------------#
+#Author: MUHAMAD
+#########THIS PRINTS THE LIST IN A SORTED MANNER######
+
+
+function sort_list(){
+
+	lst=$(cat $a | sort)
+	echo -e "$lst\n"
+
+	if [[ $? -eq 0 ]]
+	then
+        	log sort_list Success
+	else
+        	log sort_list Fail
+	fi
+
+}
+
+
+
+
+
+
+
+#-------------------------##
+#Author: MUHAMMAD#
+#This Function# Inserts new record to the list#
+
+
+function append(){
+
+local arg=$1
+local arg2=$2
+	if [[ $# -gt 2 ]]
+	then
+		echo "The name of the record should be without spaces try again"
+		return 1
+	else
+		
+		echo "$arg,$arg2" >> $a
+		cat $a | sort | uniq > $a
+	fi
+}
+
+
+#------------------------------------------#
+#Author : MUHAMMAD#
+####### THIS IS THE INSERT FUNCTION!#####
+#### It utilizes the #append function!#
+
+
+
+function insertfunc(){
+
+        local name=$1
+        local rcAmount=$2
+        echo "the record will be added"
+        append $name $rcAmount
+        echo "the record has been added"
+        return 0
+	log insertfunc Success
+
+}
+
+#-------------------------------------------#
+#Author: MUHAMMAD
+# THIS FUNCTION! DELETS A RECORD #
+
+
+function delRecord(){
+
+	local rec=$1
+	tbdeleted=$(src $rec)
+	
+	sed -i "/$tbdeleted/d" $a 
+
+}
+
+
+
+#-------------------------------------------#
+#Author: MUHAMMAD##########
+#this function checks if other functions exited successfully or not"""
+
+
+function log(){
+
+	local funcname=$1
+	local failorsuccess=$2
+
+	echo $(date)
+	echo  $funcname $failorsuccess 
+
+
+} >> FileRecord.log
+
+
+#----------------------------------#
+#Author: muhammad
+#this Function# prints the file filerecord.log#
+#in case the program is to be used by more than one person
+#an alteration should be made to this function!
+
+
+
+function print_log(){
+	
+	if [[ -e FileRecord.log ]]
+	then
+		cat FileRecord.log
+		log print_log Sucess
+		echo
+		return 0
+	else
+		echo "File doesnt exist"
+		log print_log Fail
+		return 1
+	fi
+}
+
+
+#-----------------------------------------#
+#------------------------------------------#
+#author: MUHAMMAD#
+## THE MAINN INTERFACE FUNCTION#########
+
+
+function Interface(){
+
+while [[ $op != ex ]]
+do
+
+echo "Pleas choose an Action to be taken
+A)Insert
+B)Delete
+C)Update Name
+D)Update amount
+E)Print sorted list
+F)Print log file
+G)Sum of the Exiting Records
+ex)To exit the program
+"
+
+
+read -p "Select Option: " op
+
+case $op in
+
+a|A)
+
+	read -p "enter new name: " name
+	read -p "enter record amount: " amt
+
+	insertfunc $name $amt ;;
+
+b|B)
+	read -p "enter record/part of the record name to be deleted: " tbdel
+	delRecord $tbdel
+	echo "record deleted" ;;
+
+c|C) 
+	read -p "Enter name/part of a name to be updated: " name
+	read -p "Enter the new name to be changed: " newname
+
+	updateName $name $newname ;;
+
+d|D)
+	
+	read -p "enter name of the record: " nm
+	read -p "enter amount to be changed: " am
+
+	updateAmount $nm $am ;;
+
+e|E)
+	sort_list ;;
+
+f|F)
+	
+	print_log ;;
+g|G)
+	Sum_records ;;	
+
+ex)
+	echo "BYE BYE"
+esac
+
+
+done
+}
+
+Interface

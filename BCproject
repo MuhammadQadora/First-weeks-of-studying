@@ -1,0 +1,377 @@
+#! /bin/bash
+
+
+
+############ Validation process ########
+#this #function validates if the entered arguments is a number###
+################################################################
+function isnumber(){
+        local v=$1
+	if [[ $v =~ ^-?[0-9]+$ ]] && [[ $v != ^[:upper][:lower:]+$ ]] && [[ $v != ^" "+$ ]]
+	
+        then
+          	return 0
+       	else
+           	return 1
+        fi
+}
+
+#######This #function checks if (isnumber) is negative or positive####
+##################################################################
+function neg_pos(){
+        local var=$1
+        if [[ $var =~ ^-[0-9]+$ ]]
+        then
+                return 2
+        else
+                return 1
+		exit 1
+        fi
+}
+
+
+################ this #function is used to check the nummber of Arguments######
+##########################################################################
+function numberOfArgs(){
+        num=$#
+        return $num
+}
+
+#########################operator functions######################
+
+function add(){
+        local var1=$1
+        local var2=$2
+        local result=$((var1+var2))
+        return $result
+}
+
+
+function subtract(){
+        local var1=$1
+        local var2=$2
+        result=$((var1-var2))
+        return $result
+}
+
+
+function multi(){
+        local var1=$1
+        local var2=$2
+        result=$((var1*var2))
+        return $result
+}
+
+
+function divide(){
+        local var1=$1
+        local var2=$2
+        if [[ var2 -eq 0 ]]
+        then
+                return 1
+        else
+                result=$((var1/var2))
+                return $result
+        fi
+}
+
+
+function pow(){
+        local var1=$1
+        local var2=$2
+        result=$((var1**var2))
+        return $result
+}
+
+
+
+
+function modulus(){
+        local var1=$1
+        local var2=$2
+        result=$((var1%var2))
+       	return $result
+}
+
+
+
+##########script that checks if the number is positive, negative or zero.##########
+
+
+function positiveNegativeZero() {
+        
+	local var=$1
+        if [ $var -lt 0 ]
+        then
+                echo "Negative"
+        elif [ $var -gt 0 ]
+        then
+                echo "Positive"
+        else
+                echo "Neither Positive Nor Negative"
+        fi
+}
+########Script to check whether a number is odd or even.#########
+										#oddOrEven
+										#dividedByFiveWithoutRemainder
+										#prime
+function oddOrEven() {
+        
+	local var=$1
+        if [ $((var%2)) -eq 0 ]
+        then
+                echo "Number is even."
+        else
+                echo "Number is odd."
+        fi
+}
+#########script that check Whether the answer is divided by five without a remainder.########
+
+
+function byfive() {
+        
+	local var=$1
+        if [[ $((var%5)) -eq 0 ]]
+        then
+                echo "Your number is divisible by 5"
+        else
+                echo "Your number is not divisible by 5"
+        fi
+}
+
+
+
+#######prime Check#######
+
+function prime(){
+
+	local var=$1
+
+	if [[ $((var%2)) -ne 0 ]] && [[ $((var/var)) -eq 1 ]]
+	then
+		echo "prime number"
+	else
+		echo "not prime"
+	fi
+
+
+}
+
+
+
+
+
+
+#########################	#############		
+######################## interface menu  ##############
+
+function calc(){
+
+
+while [[ $choice != "g" ]]
+do
+echo "
+a. Add
+b. Subtract
+c. Multiply
+d. Divide
+e. Power of
+f. Modulos
+g. Exit
+"
+read -p "pick operation to be done: " choice
+
+case $choice in
+
+a) 
+
+	read -p "enter first number: " num1
+	isnumber $num1
+	a=$?
+	read -p "enter second number: " num2
+	isnumber $num2
+	b=$?
+	numberOfArgs
+	if [[ $? > 2 ]]
+	then
+		echo " number of arguments exceded"
+		exit 1
+	fi 
+
+	if [[ $a -eq 0 ]] && [[ $b -eq 0 ]]
+	then
+		res=$(add $num1 num2)
+		a=$?
+		echo $a
+		prime $a
+                oddOrEven $a
+                byfive $a
+	else
+		echo "you entered an invalid num"
+	
+	fi
+	 ;;
+
+b)
+
+	read -p "enter first number: " num1
+        isnumber $num1
+        a=$?
+        read -p "enter second number: " num2
+        isnumber $num2
+        b=$?
+        numberOfArgs
+        if [[ $? > 2 ]]
+        then
+                echo " number of arguments exceded"
+                exit 1
+        fi
+
+        if [[ $a -eq 0 ]] && [[ $b -eq 0 ]]
+        then
+                res=$(subtract $num1 num2)
+                a=$?
+                echo $a
+		prime $a
+                oddOrEven $a
+                byfive $a
+        else
+                echo "you entered an invalid num"
+
+        fi
+	;;
+
+
+
+c)
+
+	read -p "enter first number: " num1
+        isnumber $num1
+        a=$?
+        read -p "enter second number: " num2
+        isnumber $num2
+        b=$?
+        numberOfArgs
+        if [[ $? > 2 ]]
+        then
+                echo " number of arguments exceded"
+                exit 1
+        fi
+
+        if [[ $a -eq 0 ]] && [[ $b -eq 0 ]]
+        then
+                res=$(multi $num1 num2)
+                a=$?
+                echo $a
+		prime $a
+                oddOrEven $a
+                byfive $a
+        else
+                echo "you entered an invalid num"
+
+        fi
+	;;
+
+
+d)
+
+	read -p "enter first number: " num1
+        isnumber $num1
+        a=$?
+        read -p "enter second number: " num2
+        isnumber $num2
+        b=$?
+        numberOfArgs
+        if [[ $? > 2 ]]
+        then
+                echo " number of arguments exceded"
+                exit 1
+        fi
+
+        if [[ $a -eq 0 ]] && [[ $b -eq 0 ]]
+        then
+                res=$(divide $num1 num2)
+                a=$?
+                echo $a
+		prime $a
+                oddOrEven $a
+                byfive $a
+        else
+                echo "you entered an invalid num"
+
+        fi
+	;;
+
+e)
+
+
+	read -p "enter first number: " num1
+        isnumber $num1
+        a=$?
+        read -p "enter second number: " num2
+        isnumber $num2
+        b=$?
+        numberOfArgs
+        if [[ $? > 2 ]]
+        then
+                echo " number of arguments exceded"
+                exit 1
+        fi
+
+        if [[ $a -eq 0 ]] && [[ $b -eq 0 ]]
+        then
+                res=$(pow $num1 num2)
+                a=$?
+                echo $a
+		prime $a
+                oddOrEven $a
+                byfive $a
+        else
+                echo "you entered an invalid num"
+
+        fi
+	;;
+
+
+f)
+
+
+	read -p "enter first number: " num1
+        isnumber $num1
+        a=$?
+        read -p "enter second number: " num2
+        isnumber $num2
+        b=$?
+        numberOfArgs
+        if [[ $? > 2 ]]
+        then
+                echo " number of arguments exceded"
+                exit 1
+        fi
+
+        if [[ $a -eq 0 ]] && [[ $b -eq 0 ]]
+        then
+                res=$(modulus $num1 num2)
+                a=$?
+                echo $a
+		prime $a
+		oddOrEven $a
+		byfive $a
+		
+        else
+                echo "you entered an invalid num"
+
+        fi
+	;;
+
+
+	
+g)
+	echo "exit"
+
+esac
+done
+}
+
+
+calc
